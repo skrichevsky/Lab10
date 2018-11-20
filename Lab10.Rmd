@@ -1,0 +1,29 @@
+# Assignment 10
+
+```{r}
+# Question 1. Write a function that calculates cumulative distribution function of a binomial random variable. Compare results from your function with pbinom function.
+# This function calculates the cumulative distribution of a binomial random variable by summing consecutive vectors applied to dbinom
+cdf_function <- function(x, size, prob){
+  cdf_sum <- 0
+  for(i in 0:x){
+    cdf_sum <- cdf_sum + dbinom(i, size, prob)
+  }
+  return(cdf_sum)
+}
+# The function I created equal pbinom up to 15 digits
+round(cdf_function(4, 12, 0.2),15) == round(pbinom(4, 12, 0.2),15)
+```
+
+```{r}
+# Question 2. Write a function that runs simulations to obtain power from a one-sample t.test. Run your function (with number of simulations=10,000) with n=30, delta=0.5, sd=1, and sig.level=0.05. Compare your results with power.t.test(n=30, delta=0.5, sd=1, sig.level=0.05, type="one.sample")
+# This function calculates the one-sample t-test on 10000 simulations of a random variable characterized by N(0.5,1)
+set.seed(123)
+power_calc <- replicate(10000,{
+  t_test <- t.test(x=rnorm(n=30, mean=0.5, sd=1))$p.value < 0.05
+  return(c("t-test:"=t_test))
+})
+sum(power_calc)/length(power_calc)
+power.t.test(n=30, delta=0.5, sd=1, sig.level=0.05, type="one.sample")$power
+# The calculated powers are both approximately 0.75
+```
+
